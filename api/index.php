@@ -1,18 +1,26 @@
 <?php
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+
 require __DIR__ . '/db.php';
 require __DIR__ . '/auth.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// si tu lances le serveur sur api/ avec php -S, l’URL sera /auth, /users, etc.
 try {
-    if ($path === '/auth' && $method === 'POST') {
+    if ($path === '/login' && $method === 'POST') {
         require __DIR__ . '/routes/auth.php';
-        handle_auth();
+        handle_login();
+    } elseif ($path === '/register' && $method === 'POST') {
+        require __DIR__ . '/routes/auth.php';
+        handle_register();
     } elseif ($path === '/users' && $method === 'GET') {
         require __DIR__ . '/routes/users.php';
         handle_users_list();
+    } elseif ($path === '/conversations' && $method === 'GET') {
+        require __DIR__ . '/routes/conversations.php';
+        handle_conversations_list();
     } elseif ($path === '/messages' && $method === 'GET') {
         require __DIR__ . '/routes/messages.php';
         handle_messages_get();

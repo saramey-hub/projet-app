@@ -1,10 +1,11 @@
 <?php
 function handle_messages_get(): void {
     $me = require_auth_user_id();
+
     $with = (int)($_GET['with'] ?? 0);
     if ($with <= 0) json_error('with parameter required', 422);
 
-    $since = $_GET['since'] ?? null; // unix timestamp (optionnel)
+    $sinceId = (int)($_GET['since_id'] ?? 0);
 
     $pdo = db();
 
@@ -21,12 +22,12 @@ function handle_messages_get(): void {
 
     $params = [':me' => $me, ':with' => $with];
 
-    if ($since && ctype_digit($since)) {
-        $sql .= " AND created_at > to_timestamp(:since)";
-        $params[':since'] = (int)$since;
+    if ($sinceId > 0) {
+        $sql .= " AND id > :since_id";
+        $params[':since_id'] = $sinceId;
     }
 
-    $sql .= " ORDER BY created_at ASC, id ASC";
+    $sql .= " ORDER BY id ASC";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);

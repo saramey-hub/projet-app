@@ -53,10 +53,13 @@ function verify_token(?string $token): ?int {
 function require_auth_user_id(): int {
     $headers = getallheaders();
     $auth = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+
     if (!$auth || !preg_match('/Bearer\s+(.+)/', $auth, $m)) {
         json_error('Missing Authorization', 401);
     }
+
     $userId = verify_token($m[1]);
     if (!$userId) json_error('Invalid token', 401);
+
     return $userId;
 }
